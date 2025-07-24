@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python URL Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%); }
+    </style>
+</head>
+<body class="gradient-bg flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-lg mx-auto bg-white rounded-xl shadow-2xl p-8 m-4">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">URL Shortener</h1>
+        <p class="text-center text-gray-500 mb-8">Create short, shareable links</p>
+        
+        <form method="POST" action="/" class="space-y-4">
+            <div>
+                <label for="url" class="sr-only">Your URL</label>
+                <input type="url" name="url" id="url" required 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                       placeholder="https://your-long-url.com/goes-here">
+            </div>
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition transform hover:scale-105">
+                Shorten!
+            </button>
+        </form>
+        
+        {% if error %}
+            <div class="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        {% if short_url %}
+            <div class="mt-6 p-4 bg-green-100 border border-green-400 rounded-lg text-center">
+                <p class="text-gray-700">Your shortened URL is ready:</p>
+                <a href="{{ short_url }}" target="_blank" class="text-xl font-semibold text-blue-600 hover:underline break-all">{{ short_url }}</a>
+                <button onclick="copyToClipboard('{{ short_url }}')" 
+                        class="mt-4 w-full bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition">
+                    Copy to Clipboard
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            // Use the modern clipboard API if available, for better security
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() {
+                    alert('Copied to clipboard!');
+                }, function(err) {
+                    alert('Failed to copy.');
+                });
+            } else {
+                // Fallback for older browsers
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                try {
+                    document.execCommand('copy');
+                    alert('Copied to clipboard!');
+                } catch (err) {
+                    alert('Failed to copy.');
+                }
+                document.body.removeChild(el);
+            }
+        }
+    </script>
+</body>
+</html>
